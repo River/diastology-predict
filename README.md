@@ -19,13 +19,13 @@ PMID: [35753590](https://pubmed.ncbi.nlm.nih.gov/35753590/)  DOI: [10.1016/j.ech
 
 ## Usage
 
-1. Install pip requirements
+### 1. Install pip requirements
 
 ```sh
 python -m pip install -r requirements.txt
 ```
 
-2. Make an input file (CSV format)
+### 2. Make an input file (CSV format)
 
 An example row is shown below. This file can contain as many rows as you want. Save this as `example.csv`. 
 
@@ -34,7 +34,7 @@ lvef,LA_vol,tr_vel,E,Lat_E,Septal_E,EAratio,avgEeratio,myocardial_dz
 65.0,32.1428571428571,1.8027756377319943,63.0,5.1,3.7,0.68,14.32,False
 ```
 
-3. Make predictions through models
+### 3. Make predictions through models
 
 ```sh
 python predict.py --file example.csv
