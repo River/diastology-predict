@@ -63,11 +63,11 @@ def preprocess_nn_data(X, y=None):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--source", help="path to input csv file", required=True)
+    parser.add_argument("--file", help="path to input csv file", required=True)
     args = parser.parse_args()
 
     # load data
-    df = pd.read_csv(args.source)
+    df = pd.read_csv(args.file)
     df = df.reset_index(drop=True)
 
     # check all columns are present in input
