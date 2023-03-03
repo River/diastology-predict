@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from datetime import datetime
 from pathlib import Path
-import argparse
+import os
 
 
 MODEL_NN = "models/2022.01.06_03_nn.joblib"
@@ -24,6 +24,7 @@ FEATURES = [
     "myocardial_dz",
 ]
 
+INPUT_DIR = "input"
 OUTPUT_DIR = "output"
 
 def preprocess_nn_data(X, y=None):
@@ -62,40 +63,40 @@ def preprocess_nn_data(X, y=None):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--file", help="path to input csv file", required=True)
-    args = parser.parse_args()
+    files = os.listdir(INPUT_DIR)
 
-    # load data
-    df = pd.read_csv(args.file)
-    df = df.reset_index(drop=True)
+    for f in files:
 
-    # check all columns are present in input
-    if not set(FEATURES).issubset(df.columns):
-        raise ValueError(f"Input should contain following columns: {','.join(FEATURES)}")
+        # load data
+        input_df = pd.read_csv(f"{INPUT_DIR}/{f}")
+        input_df = input_df.reset_index(drop=True)
 
-    # preprocess data
-    x = df[FEATURES]
-    x_nn = preprocess_nn_data(x)
+        # check all columns are present in input
+        if not set(FEATURES).issubset(input_df.columns):
+            raise ValueError(f"Input should contain following columns: {','.join(FEATURES)}")
 
-    # load models
-    model_svc = joblib.load(MODEL_SVC)
-    model_tree = joblib.load(MODEL_TREE)
-    model_nn = joblib.load(MODEL_NN)
-    model_nn_cv = joblib.load(MODEL_NN_CV)
+        # preprocess data
+        x = input_df[FEATURES]
+        x_nn = preprocess_nn_data(x)
 
-    # make predictions and save to dataframe
-    results_df = pd.DataFrame(
-        model_nn.predict(x_nn), columns=["nn_norm", "nn_mild", "nn_mod", "nn_sev"]
-    )
-    results_df['nn_cv'] = model_nn_cv.predict(x_nn)
-    results_df['svc'] = model_svc.predict(x)
-    results_df['tree'] = model_tree.predict(x)
+        # load models
+        model_svc = joblib.load(MODEL_SVC)
+        model_tree = joblib.load(MODEL_TREE)
+        model_nn = joblib.load(MODEL_NN)
+        model_nn_cv = joblib.load(MODEL_NN_CV)
 
-    # join results df with input df
-    df = pd.concat([df, results_df], axis=1)
+        # make predictions and save to dataframe
+        results_df = pd.DataFrame(
+            model_nn.predict(x_nn), columns=["nn_norm", "nn_mild", "nn_mod", "nn_sev"]
+        )
+        results_df['nn_cv'] = model_nn_cv.predict(x_nn)
+        results_df['svc'] = model_svc.predict(x)
+        results_df['tree'] = model_tree.predict(x)
 
-    # save as output
-    Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
-    current_date = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-    df.to_csv(f"output/{current_date}.csv", index=False)
+        # join results df with input df
+        output_df = pd.concat([input_df, results_df], axis=1)
+
+        # save as output
+        Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+        current_date = datetime.now().strftime("%Y.%m.%d.%H%M")
+        output_df.to_csv(f"{OUTPUT_DIR}/{current_date}-{f}", index=False)
