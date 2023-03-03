@@ -19,25 +19,35 @@ PMID: [35753590](https://pubmed.ncbi.nlm.nih.gov/35753590/)  DOI: [10.1016/j.ech
 
 ## Usage
 
-### 1. Install pip requirements
+### 1. Install Docker
+
+Follow instructions to [install Docker](https://docs.docker.com/get-docker/) on your system.
+
+### 2. Build Docker image
 
 ```sh
-python -m pip install -r requirements.txt
+docker build -t diastology-predict .
 ```
 
-### 2. Make an input file (CSV format)
+### 3. Make an input file (CSV format)
 
-An example row is shown below. This file can contain as many rows as you want. Save this as `example.csv`. 
+Use the `input/test_input.csv` as an example. This file can contain as many rows as you want. Save any number of these input files in the `input/` directory.
 
 ```csv
 lvef,LA_vol,tr_vel,E,Lat_E,Septal_E,EAratio,avgEeratio,myocardial_dz
 65.0,32.1428571428571,1.8027756377319943,63.0,5.1,3.7,0.68,14.32,False
 ```
 
-### 3. Make predictions through models
+### 3. Run model inference
 
 ```sh
-python predict.py --file example.csv
+docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output diastology-predict
 ```
 
-This will output the results into `output/YYYY-mm-dd-HHMMSS.csv` for your further analysis.
+All output files will be saved into the `output/` directory for further analysis.
+
+Alternatively, run the following command to save the standard output and standard error streams from the Docker image for debugging purposes.
+
+```sh
+docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output diastology-predict /bin/bash -c "python predict.py > /app/output/output.log 2>&1"
+```
