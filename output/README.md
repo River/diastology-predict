@@ -1,0 +1,1 @@
+This file is just meant to keep the output/ directory as an empty directory in the git repository.

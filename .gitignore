@@ -1,1 +1,3 @@
 notebooks/
+output/*
+!output/README.md
