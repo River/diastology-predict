@@ -49,5 +49,5 @@ All output files will be saved into the `output/` directory for further analysis
 Alternatively, run the following command to save the standard output and standard error streams from the Docker image for debugging purposes.
 
 ```sh
-docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output diastology-predict /bin/bash -c "python predict.py > /app/output/output.log 2>&1"
+docker run -v input:/app/input -v output:/app/output diastology-predict /bin/bash -c "python predict.py > /app/output/output.log 2>&1"
 ```
