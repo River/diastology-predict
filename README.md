@@ -38,10 +38,10 @@ lvef,LA_vol,tr_vel,E,Lat_E,Septal_E,EAratio,avgEeratio,myocardial_dz
 65.0,32.1428571428571,1.8027756377319943,63.0,5.1,3.7,0.68,14.32,False
 ```
 
-### 3. Run model inference
+### 4. Run model inference
 
 ```sh
-docker run -v $(pwd)/input:/app/input -v $(pwd)/output:/app/output diastology-predict
+docker run -v input:/app/input -v output:/app/output diastology-predict
 ```
 
 All output files will be saved into the `output/` directory for further analysis.
